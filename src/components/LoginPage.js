@@ -1,66 +1,96 @@
-import React, { useState } from 'react';
+import React, { Component } from 'react';
 import "bootstrap/dist/css/bootstrap.css";
 import {Button, Row, Col, Form, Image} from 'react-bootstrap';
+import { fetchCategories } from "../actions/LoginActions";
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { withRouter } from 'react-router';
 
-function LoginPage() {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [emailError, setEmailError] = useState('');
-    const [passwordError, setPasswordError] = useState('');
+class LoginPage extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            email : '',
+            password : '',
+            emailError : '',
+            passwordError : ''
+        }
+    }
 
-    function handleChange(e) {
+    componentDidMount() {
+        this.props.fetchCategories();
+    }
+
+    handleChange = (e) => {
         switch(e.target.type) {
             case "email":
-                validateEmail(e.target.value) ? setEmailError('') : setEmailError('Invalid Email');
-                setEmail(e.target.value);
+                this.validateEmail(e.target.value) ? this.setState({emailError : ''}) : this.setState({emailError : 'Invalid Email'});
+                this.setState({email : e.target.value})
                 break
             case "password":
-                validatePassword(e.target.value) ? setPasswordError('') : setPasswordError('Invalid Password');
-                setPassword(e.target.value);
+                this.validatePassword(e.target.value) ? this.setState({passwordError : ''}) : this.setState({passwordError : 'Invalid Password'});
+                this.setState({password : e.target.value})
                 break
             default:
                 break;
         }
     }
 
-    function validateEmail(email) {
+    validateEmail = (email) => {
         const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return regexEmail.test(email) || email == '';
     }
 
-    function validatePassword(pass) {
+    validatePassword = (pass) => {
         const regexPass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
         return regexPass.test(pass) || pass == '';
     }
 
-    function handleSubmitForm() {
-        
+    handleSubmitForm = () => {
+        if(this.state.emailError === '' && this.state.passwordError === '')
+            this.props.history.push({pathname: '/dashboard'});
     }
 
-    return (
-        <div>
-            <Row className="landing">
-                <Col>
-                    <Form style={{width:"80%", marginLeft:"10%", marginTop:"30%"}}>
-                        <Form.Group >
-                            <Form.Label>Email</Form.Label>
-                            <Form.Control type="email" placeholder="Enter your email" onChange={e => handleChange(e)}/>
-                            <span className="error text-danger" style={{fontSize:12}}>{emailError}</span>
-                        </Form.Group>
-                        <Form.Group >
-                            <Form.Label>Password</Form.Label>
-                            <Form.Control type="password" placeholder="Enter your password" onChange={e => handleChange(e)}/>
-                            <span className="error text-danger" style={{fontSize:12}}>{passwordError}</span>
-                        </Form.Group>
-                        <Button type="submit" onPress={handleSubmitForm}>Submit</Button>
-                    </Form>
-                </Col>
-                <Col>
-                    <Image src="./assets/login.jpg" thumbnail style={{border:"none", marginTop:"20%"}} />
-                </Col>
-            </Row>
-        </div>
-    )
+    render(){
+        return (
+            <div>
+                <Row className="landing">
+                    <Col>
+                        <Form style={{width:"80%", marginLeft:"10%", marginTop:"30%"}}>
+                            <Form.Group >
+                                <Form.Label>Email</Form.Label>
+                                <Form.Control type="email" placeholder="Enter your email" onChange={e => this.handleChange(e)}/>
+                                <span className="error text-danger" style={{fontSize:12}}>{this.state.emailError}</span>
+                            </Form.Group>
+                            <Form.Group >
+                                <Form.Label>Password</Form.Label>
+                                <Form.Control type="password" placeholder="Enter your password" onChange={e => this.handleChange(e)}/>
+                                <span className="error text-danger" style={{fontSize:12}}>{this.state.passwordError}</span>
+                            </Form.Group>
+                            <Button type="submit" onClick={() => this.handleSubmitForm()}>Submit</Button>
+                        </Form>
+                    </Col>
+                    <Col>
+                        <Image src="./assets/login.jpg" thumbnail style={{border:"none", marginTop:"10%"}} />
+                    </Col>
+                </Row>
+            </div>
+        )
+    }
 }
 
-export default LoginPage;
+const mapStateToProps = state => {
+    return {
+        categories: state.login.categories
+    };
+  };
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators(
+    {
+      fetchCategories,
+    },
+    dispatch,
+  );
+
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(LoginPage));
