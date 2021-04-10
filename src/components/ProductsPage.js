@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import { withRouter } from "react-router";
 import { bindActionCreators } from "redux";
 import { fetchProducts } from "../actions/ProductsActions";
-import ProductDetail from "./ProductDetail";
 
 class ProductsPage extends Component {
   constructor(props) {
@@ -19,9 +18,12 @@ class ProductsPage extends Component {
     this.setState({ showModal: flag });
   };
 
-  componentDidMount() {}
+  componentDidMount() {
+    // this.props.fetchProducts(this.props.match.params.categoryName);
+  }
 
   componentWillReceiveProps(nextProps) {
+    console.log("category -> " + this.props.match.params.categoryName);
     if (
       nextProps.match.params.categoryName !=
       this.props.match.params.categoryName

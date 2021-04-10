@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import "bootstrap/dist/css/bootstrap.css";
-import { Button, Row, Col, Form, Image, ButtonGroup } from "react-bootstrap";
+import { Spinner } from "react-bootstrap";
 import { fetchCategories } from "../actions/LoginActions";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
@@ -23,18 +23,25 @@ class HomePage extends Component {
     this.props.fetchCategories();
   }
 
-  handleSubmitForm = () => {
-    this.props.history.push({ pathname: "/dashboard" });
-  };
-
   render() {
     return (
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <div>
+      <div style={{ display: "flex", flexDirection: "row", flex: 1 }}>
+        <div style={{ flex: 1 }}>
           <Sidebar />
         </div>
-        <div>
-          <ProductsPage />
+        <div style={{ flex: 4 }}>
+          {this.props.isLoading ? (
+            <div
+              style={{
+                marginLeft: "45%",
+                marginTop: "25%",
+              }}
+            >
+              <Spinner animation="grow" />
+            </div>
+          ) : (
+            <ProductsPage />
+          )}
         </div>
       </div>
     );
@@ -44,6 +51,7 @@ class HomePage extends Component {
 const mapStateToProps = (state) => {
   return {
     categories: state.login.categories,
+    isLoading: state.login.isProductsLoading,
   };
 };
 
