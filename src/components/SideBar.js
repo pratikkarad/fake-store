@@ -24,7 +24,7 @@ class SideBar extends Component {
                   <CDBSidebarMenu>
                     {this.props.categories.map((category => {
                         return (
-                            <NavLink exact to={'/category/' + category} activeClassName="activeClicked">
+                            <NavLink exact to={'/category/' + category} activeClassName="activeClicked" key={category}>
                                 <CDBSidebarMenuItem icon="columns">{has.startCase(category)}</CDBSidebarMenuItem>
                             </NavLink>
                         )
