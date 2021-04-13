@@ -47,8 +47,19 @@ class LoginPage extends Component {
   };
 
   handleSubmitForm = () => {
-    if (this.state.emailError === "" && this.state.passwordError === "") {
+    const regexEmail = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const regexPass = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    if (
+      regexEmail.test(this.state.email) &&
+      regexPass.test(this.state.password)
+    ) {
       this.props.setUserDetails(this.state.email, this.state.password);
+      this.props.history.push({
+        pathname: "/dashboard",
+      });
+    } else {
+      this.setState({ emailError: "Invalid Email" });
+      this.setState({ passwordError: "Invalid Password" });
     }
   };
 
